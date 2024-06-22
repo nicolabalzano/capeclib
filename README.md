@@ -46,7 +46,8 @@ The API available now are:
 <HOST>:<PORT>/get_cwe_ids_by_capec?id=<CAPEC-ID> 
 ```
 
-The host is the IP of machime that run the server, if you
+The <HOST> is the IP number of machime that run the server, and the <PORT> is `5003`, if you would change, go in `app.py` and change the number in this line `port = int(os.environ.get('PORT', 5003))`.
+
 
 > [!NOTE] 
 > If you need more info or some other methods from this library contact me or open an issue, I will be happy to help.
