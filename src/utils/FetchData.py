@@ -2,6 +2,7 @@ import json
 import yaml
 import requests
 import git
+import subprocess
 
 from os.path import exists
 
@@ -36,7 +37,7 @@ def __fetch_file(domain: str, path_commit: str, branch: str):
             save_to_json_file(file_json, domain, default_path)
 
             # update and save data
-            __update_local_hash(domain, __get_current_commit(domain, branch))
+            __update_local_hash(domain, __get_current_commit(branch))
             return file_json
         
         else:
@@ -51,14 +52,16 @@ def __fetch_file(domain: str, path_commit: str, branch: str):
 
 def __check_last_commit(domain: str, branch: str = 'master') -> bool:
     if __check_internet_connection():
-        return __get_current_commit(domain, branch) == __get_last_local_hash(domain)
+        return __get_current_commit(branch) == __get_last_local_hash(domain)
     else:
         return True
 
 
-def __get_current_commit(domain: str, branch: str = 'master'):
-    last_commit_sha = git.cmd.Git().ls_remote(default_repo, heads=True)
-    for string in str(last_commit_sha).split("\n"):
+def __get_current_commit(branch: str = 'master'):
+    command = f"git ls-remote {default_repo} HEAD"
+    result = subprocess.run(command.split(), capture_output=True, text=True)
+    last_commit_hash = result.stdout.split()[0]
+    for string in str(last_commit_hash).split("\n"):
         if string.__contains__(branch):
             return string[0:40]
 
