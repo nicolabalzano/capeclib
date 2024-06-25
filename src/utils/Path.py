@@ -5,4 +5,5 @@ directories_up = os.path.dirname(current_directory)
 
 default_path = directories_up+"/_data/"
 CAPEC = "stix-capec"
-default_repo = "https://github.com/mitre/cti.git",
+default_repo = "mitre/cti",
+commit_repo = "https://api.github.com/repos/mitre/cti/commits/master"

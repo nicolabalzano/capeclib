@@ -8,7 +8,7 @@ from os.path import exists
 
 import yaml
 from src.utils.FileUtils import save_to_json_file, read_from_json, extension_check  
-from src.utils.Path import default_path, default_repo, CAPEC
+from src.utils.Path import default_path, default_repo, CAPEC, commit_repo
 
 def fetch_capec_data():
     """
@@ -58,12 +58,15 @@ def __check_last_commit(domain: str, branch: str = 'master') -> bool:
 
 
 def __get_current_commit(branch: str = 'master'):
-    command = f"git ls-remote {default_repo} HEAD"
-    result = subprocess.run(command.split(), capture_output=True, text=True)
-    last_commit_hash = result.stdout.split()[0]
-    for string in str(last_commit_hash).split("\n"):
-        if string.__contains__(branch):
-            return string[0:40]
+    # last_commit_sha = git.cmd.Git().ls_remote(default_repo, heads=True)
+    response = requests.get(commit_repo)
+    if response.status_code == 200:
+        data = response.json()
+        last_commit_sha = data['sha']
+        return last_commit_sha
+    else:
+        raise Exception(f"Failed to get current commit from GitHub API: {response.status_code}")
+    
 
 def __get_last_local_hash(domain: str) -> str:
     return read_from_json(default_path, "local-hashes")[domain]
